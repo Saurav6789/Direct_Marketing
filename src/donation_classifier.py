@@ -8,7 +8,7 @@ if __name__ == "__main__":
     # Paths to train and test data files
     train_file_path = "../data/raw/cup98LRN.txt"
     test_file_path = "../data/raw/cup98VAL.txt"
-    output_file_path = "../data/processed"
+    output_file_path = "../data/processed/test_data_clf"
     # Target column name
     target_column = "TARGET_B"
 
