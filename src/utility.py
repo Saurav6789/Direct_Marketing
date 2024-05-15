@@ -162,7 +162,7 @@ def ordinal_encode_categorical_columns(data):
     return categorical_data_encoded
 
 
-def find_categorical_and_numerical_columns(data):
+def find_cat_and_num_columns(data):
     """
     Find categorical and numerical columns in a DataFrame.
 
