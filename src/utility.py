@@ -98,7 +98,7 @@ def find_columns_with_missing_values(data: pd.DataFrame, threshold: float):
     return columns_with_missing_values
 
 
-def get_constant_variance_columns(data, threshold=0):
+def get_constant_variance_numerical_columns(data, threshold=0):
     """
     Calculate the columns with constant variance using VarianceThreshold.
 
@@ -112,11 +112,47 @@ def get_constant_variance_columns(data, threshold=0):
     - constant_variance_columns: list
             List of column names with constant variance.
     """
+    # Selecting numerical columns
+    numerical_columns = data.select_dtypes(include=['number']).columns.tolist()
+    numerical_data = data[numerical_columns]
     # Initialize VarianceThreshold
     var_model = VarianceThreshold(threshold=threshold)
 
     # Fit to data
-    var_model.fit(data)
+    var_model.fit(numerical_data)
+
+    # Get boolean mask of selected features
+    constant_features_mask = var_model.get_support()
+
+    # Get column names with constant variance
+    constant_variance_columns = data.columns[~constant_features_mask].tolist()
+
+    return constant_variance_columns
+
+
+def get_constant_variance_categorical_columns(data, threshold=0):
+    """
+    Calculate the columns with constant variance using VarianceThreshold.
+
+    Parameters:
+    - data: pandas DataFrame or array-like of shape (n_samples, n_features)
+            Input data.
+    - threshold: float, optional (default=0)
+            Features with a variance lower than this threshold will be removed.
+
+    Returns:
+    - constant_variance_columns: list
+            List of column names with constant variance.
+    """
+    # Selecting numerical columns
+    categorical_columns = data.select_dtypes(
+        include=['object']).columns.tolist()
+    categorical_data = data[categorical_columns]
+    # Initialize VarianceThreshold
+    var_model = VarianceThreshold(threshold=threshold)
+
+    # Fit to data
+    var_model.fit(categorical_data)
 
     # Get boolean mask of selected features
     constant_features_mask = var_model.get_support()
@@ -138,8 +174,6 @@ def ordinal_encode_categorical_columns(data):
     Returns:
     - encoded_data: pandas DataFrame
             DataFrame with categorical columns encoded using ordinal encoding.
-    - encoder: OrdinalEncoder
-            Fitted OrdinalEncoder object used for encoding.
     """
 
     # Selecting categorical columns
